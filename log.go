@@ -20,20 +20,22 @@ func (le *LogEntry) String() string {
 	return fmt.Sprintf("%v - %v", tstr, le.Message)
 }
 
-func FormatEventMessage(cw *CurrentWeather, duration string) string {
+// format watering event log message
+func FormatEventMessage(cw *CurrentWeather, duration string, valve string, name string) string {
 	if cw == nil {
-		return fmt.Sprintf("Water Event: %v", duration)
+		return fmt.Sprintf("Water on Valve %v (%v) Event: %v", valve, name, duration)
 	} else {
-		msg := fmt.Sprintf("Temp: %v || Humidity: %v || Condition: %v || Water Type: %v", cw.Temp, cw.Humidity, cw.Condition.Text, duration)
+		msg := fmt.Sprintf("Valve: %v (%v) || Temp: %v || Humidity: %v || Condition: %v || Water Type: %v", valve, name, cw.Temp, cw.Humidity, cw.Condition.Text, duration)
 		return msg
 	}
 }
 
-func LogEvent(c *Config, cw *CurrentWeather, duration string) error {
+// log event in location defined in config
+func (v *Valve) LogEvent(c *Config, cw *CurrentWeather, duration string) error {
 	le := LogEntry{
 		Type:      "event",
 		Timestamp: time.Now(),
-		Message:   FormatEventMessage(cw, duration),
+		Message:   FormatEventMessage(cw, duration, v.ID, v.Name),
 	}
 	if !c.UseDBLog {
 		file, err := os.OpenFile(c.EventLogFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
@@ -48,7 +50,11 @@ func LogEvent(c *Config, cw *CurrentWeather, duration string) error {
 		}
 		return nil
 	} else {
-		_, err := c.LogDB.Exec("INSERT INTO events (eventtime, message) VALUES ($1, $2)", le.Timestamp, le.Message)
+		err := c.LogDB.Ping()
+		if err != nil {
+			return fmt.Errorf("could not connect to log database: %v", err)
+		}
+		_, err = c.LogDB.Exec("INSERT INTO events (eventtime, message) VALUES ($1, $2)", le.Timestamp, le.Message)
 		if err != nil {
 			return fmt.Errorf("could not insert event into log db: %v", err)
 		}
@@ -62,6 +68,7 @@ func LogEvent(c *Config, cw *CurrentWeather, duration string) error {
 	return nil
 }
 
+// log error in location defined in config
 func LogError(c *Config, e error) error {
 	le := LogEntry{
 		Type:      "error",
@@ -93,6 +100,7 @@ func LogError(c *Config, e error) error {
 	return nil
 }
 
+// Send push notif request to Pushover
 func PushNotif(c *Config, le *LogEntry) error {
 	app := pushover.New(c.PushoverAppToken)
 	recipients := make([]*pushover.Recipient, 0)
