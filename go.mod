@@ -6,4 +6,4 @@ require github.com/stianeikeland/go-rpio/v4 v4.6.0
 
 require github.com/lib/pq v1.10.9
 
-require github.com/gregdel/pushover v1.3.1 // indirect
+require github.com/gregdel/pushover v1.3.1
