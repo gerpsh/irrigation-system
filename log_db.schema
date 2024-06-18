@@ -1,0 +1,3 @@
+create database irrigationlog;
+create table events(id INT GENERATED ALWAYS AS IDENTITY, eventtime TIMESTAMP WITH TIME ZONE, message TEXT);
+create table errors(id INT GENERATED ALWAYS AS IDENTITY, errortime TIMESTAMP WITH TIME ZONE, message TEXT);
