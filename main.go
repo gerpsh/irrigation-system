@@ -70,7 +70,7 @@ func main() {
 						}
 						log.Fatalf("could not do a long water: %v", err)
 					}
-					err = v.LogEvent(config, weather.Current, "long")
+					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", v.LongWaterTime))
 					if err != nil {
 						logerr := LogError(config, err)
 						if logerr != nil {
@@ -106,7 +106,7 @@ func main() {
 						}
 						log.Fatalf("could not do a short water: %v", err)
 					}
-					err = v.LogEvent(config, weather.Current, "short")
+					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", v.ShortWaterTime))
 					if err != nil {
 						logerr := LogError(config, err)
 						if logerr != nil {

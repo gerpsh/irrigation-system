@@ -25,7 +25,7 @@ func FormatEventMessage(cw *CurrentWeather, duration string, valve string, name 
 	if cw == nil {
 		return fmt.Sprintf("Water on Valve %v (%v) Event: %v", valve, name, duration)
 	} else {
-		msg := fmt.Sprintf("Valve: %v (%v) || Temp: %v || Humidity: %v || Condition: %v || Water Type: %v", valve, name, cw.Temp, cw.Humidity, cw.Condition.Text, duration)
+		msg := fmt.Sprintf("Valve: %v (%v) || Temp: %v || Humidity: %v || Condition: %v || Water Duration: %vs", valve, name, cw.Temp, cw.Humidity, cw.Condition.Text, duration)
 		return msg
 	}
 }
