@@ -44,11 +44,9 @@ func main() {
 		// create nil pointer to weather data, fill it later if we're using weather
 		var weather *WeatherData
 		now := time.Now()
-		// if this is a primary watering timepoint, get the weather if we're using weather..
-		if IsPrimaryWaterTimepoint(config, now) {
-			// check if we're online, decide whether to use network/internet-bound features
-			_ = config.OnlineCheck()
-			if config.UseWeather {
+		for _, v := range config.Valves {
+			if is, kind, duration := v.IsWaterTimepoint(config, now); is {
+				_ = config.OnlineCheck()
 				weather, err = GetWeatherTimeline(config)
 				if err != nil {
 					logerr := LogError(config, fmt.Errorf("could not create weather timeline: %v", err))
@@ -57,20 +55,32 @@ func main() {
 					}
 					log.Fatalf("could not create weather timeline: %v", err)
 				}
-			}
-			// ...and water for the long duration if the weather calls for it
-			// (default without weather is always water)
-			if ShouldWaterPrimary(config, weather) {
-				for _, v := range config.Valves {
-					err := v.LongWater(config)
+				if kind == "primary" && ShouldWaterPrimary(config, weather) {
+					err = v.Water(config, duration)
 					if err != nil {
-						logerr := LogError(config, fmt.Errorf("could not do a long water: %v", err))
+						logerr := LogError(config, fmt.Errorf("could not water on valve %v (%v): %v", v.ID, v.Name, err))
 						if logerr != nil {
-							log.Printf("could not log error: %v\n", logerr)
+							log.Printf("could not log error: %v\n", err)
 						}
-						log.Fatalf("could not do a long water: %v", err)
+						log.Fatalf("could not create weather timeline: %v", err)
 					}
-					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", v.LongWaterTime))
+					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", duration))
+					if err != nil {
+						logerr := LogError(config, err)
+						if logerr != nil {
+							log.Printf("could not log error: %v", logerr)
+						}
+					}
+				} else if kind == "secondary" && ShouldWaterSecondary(config, weather) {
+					err = v.Water(config, duration)
+					if err != nil {
+						logerr := LogError(config, fmt.Errorf("could not water on valve %v (%v): %v", v.ID, v.Name, err))
+						if logerr != nil {
+							log.Printf("could not log error: %v\n", err)
+						}
+						log.Fatalf("could not create weather timeline: %v", err)
+					}
+					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", duration))
 					if err != nil {
 						logerr := LogError(config, err)
 						if logerr != nil {
@@ -79,45 +89,6 @@ func main() {
 					}
 				}
 			}
-			// pause for a minute so we're not done watering before the timepoint is over
-			time.Sleep(time.Minute * time.Duration(1))
-			// if this is a secondary timepoint, get the weather if we're using weather...
-		} else if IsSecondaryWaterTimepoint(config, now) {
-			config.OnlineCheck()
-			if config.UseWeather {
-				weather, err = GetWeatherTimeline(config)
-				if err != nil {
-					logerr := LogError(config, fmt.Errorf("could not create weather timeline: %v", err))
-					if logerr != nil {
-						log.Printf("could not log error: %v", logerr)
-					}
-					log.Fatalf("could not create weather timeline: %v", err)
-				}
-			}
-			//...and water for the short duration if the weather calls for it
-			// (default without weather is never water)
-			if ShouldWaterSecondary(config, weather) {
-				for _, v := range config.Valves {
-					err := v.ShortWater(config)
-					if err != nil {
-						logerr := LogError(config, fmt.Errorf("could not do a short water: %v", err))
-						if logerr != nil {
-							log.Printf("could not log error: %v\n", logerr)
-						}
-						log.Fatalf("could not do a short water: %v", err)
-					}
-					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", v.ShortWaterTime))
-					if err != nil {
-						logerr := LogError(config, err)
-						if logerr != nil {
-							log.Printf("could not log error: %v", logerr)
-						}
-					}
-				}
-			}
-			// pause for a minute so we're not done watering before the timepoint is over
-			time.Sleep(time.Minute * time.Duration(1))
 		}
-		time.Sleep(time.Second * time.Duration(1))
 	}
 }
