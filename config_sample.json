@@ -13,39 +13,59 @@
             "id": "1",
             "name": "blueberries",
             "pin": 26,
-            "short_water_time": 30,
-            "long_water_time": 75
+            "timepoints": [
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 7,
+                    "minute": 1,
+                    "type": "primary",
+                    "duration": 75
+                },
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 21,
+                    "minute": 1,
+                    "type": "primary",
+                    "duration": 75
+                },
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 3,
+                    "minute": 30,
+                    "type": "secondary",
+                    "duration": 30
+                }
+            ]
         },
         {
             "id": "2",
             "name": "peppers",
             "pin": 20,
-            "short_water_time": 15,
-            "long_water_time": 30
+            "timepoints": [
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 7,
+                    "minute": 1,
+                    "type": "primary",
+                    "duration": 25
+                },
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 21,
+                    "minute": 1,
+                    "type": "primary",
+                    "duration": 25
+                },
+                {
+                    "days": [0,1,2,3,4,5,6],
+                    "hour": 3,
+                    "minute": 30,
+                    "type": "secondary",
+                    "duration": 15
+                }
+            ]
         }
     ],
-    "water_timepoints": {
-        "primary": [
-            {
-                "hour": 9,
-                "minute": 1
-            },
-            {
-                "hour": 21,
-                "minute": 1
-            }
-        ],
-        "secondary": [
-            {
-                "hour": 15,
-                "minute": 30
-            },
-            {
-                "hour": 3,
-                "minute": 1
-            }
-        ]
-    },
     "use_weather": true,
     "weather_api_key": "<your_weatherapi.com_api_key>",
     "location": "19130",

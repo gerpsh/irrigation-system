@@ -6,17 +6,21 @@ import (
 )
 
 func TestIsWaterTimepoint(t *testing.T) {
-	config := &Config{
-		WaterTimepoints: map[string][]*WaterTimepoint{
-			"primary": []*WaterTimepoint{
-				&WaterTimepoint{Hour: 9, Minute: 1, Days: []int{0, 1, 2, 3, 4, 5, 6}},
+	config := &Config{}
+
+	tp := time.Date(2024, 6, 17, 9, 1, 0, 0, time.Local)
+
+	v := &Valve{
+		Timepoints: []*WaterTimepoint{
+			&WaterTimepoint{
+				Days:   []int{0, 1, 2, 3, 4, 5, 6},
+				Hour:   9,
+				Minute: 1,
 			},
 		},
 	}
 
-	tp := time.Date(2024, 6, 17, 9, 1, 0, 0, time.Local)
-
-	is := IsPrimaryWaterTimepoint(config, tp)
+	is, _ := v.IsWaterTimepoint(config, tp)
 	if !is {
 		t.Errorf("expected time point to be true, returned false")
 	}

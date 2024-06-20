@@ -41,14 +41,13 @@ func main() {
 
 	log.Println("running...")
 	for {
+		waterTime := 0
 		// create nil pointer to weather data, fill it later if we're using weather
 		var weather *WeatherData
 		now := time.Now()
-		// if this is a primary watering timepoint, get the weather if we're using weather..
-		if IsPrimaryWaterTimepoint(config, now) {
-			// check if we're online, decide whether to use network/internet-bound features
-			_ = config.OnlineCheck()
-			if config.UseWeather {
+		for _, v := range config.Valves {
+			if is, tp := v.IsWaterTimepoint(config, now); is {
+				_ = config.OnlineCheck()
 				weather, err = GetWeatherTimeline(config)
 				if err != nil {
 					logerr := LogError(config, fmt.Errorf("could not create weather timeline: %v", err))
@@ -57,20 +56,17 @@ func main() {
 					}
 					log.Fatalf("could not create weather timeline: %v", err)
 				}
-			}
-			// ...and water for the long duration if the weather calls for it
-			// (default without weather is always water)
-			if ShouldWaterPrimary(config, weather) {
-				for _, v := range config.Valves {
-					err := v.LongWater(config)
+				if ShouldWater(config, weather, tp) {
+					err = v.Water(config, tp.Duration)
 					if err != nil {
-						logerr := LogError(config, fmt.Errorf("could not do a long water: %v", err))
+						logerr := LogError(config, fmt.Errorf("could not water on valve %v (%v): %v", v.ID, v.Name, err))
 						if logerr != nil {
-							log.Printf("could not log error: %v\n", logerr)
+							log.Printf("could not log error: %v\n", err)
 						}
-						log.Fatalf("could not do a long water: %v", err)
+						log.Fatalf("could not create weather timeline: %v", err)
 					}
-					err = v.LogEvent(config, weather.Current, "long")
+					waterTime += tp.Duration
+					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", tp.Duration))
 					if err != nil {
 						logerr := LogError(config, err)
 						if logerr != nil {
@@ -79,44 +75,12 @@ func main() {
 					}
 				}
 			}
-			// pause for a minute so we're not done watering before the timepoint is over
-			time.Sleep(time.Minute * time.Duration(1))
-			// if this is a secondary timepoint, get the weather if we're using weather...
-		} else if IsSecondaryWaterTimepoint(config, now) {
-			config.OnlineCheck()
-			if config.UseWeather {
-				weather, err = GetWeatherTimeline(config)
-				if err != nil {
-					logerr := LogError(config, fmt.Errorf("could not create weather timeline: %v", err))
-					if logerr != nil {
-						log.Printf("could not log error: %v", logerr)
-					}
-					log.Fatalf("could not create weather timeline: %v", err)
-				}
-			}
-			//...and water for the short duration if the weather calls for it
-			// (default without weather is never water)
-			if ShouldWaterSecondary(config, weather) {
-				for _, v := range config.Valves {
-					err := v.ShortWater(config)
-					if err != nil {
-						logerr := LogError(config, fmt.Errorf("could not do a short water: %v", err))
-						if logerr != nil {
-							log.Printf("could not log error: %v\n", logerr)
-						}
-						log.Fatalf("could not do a short water: %v", err)
-					}
-					err = v.LogEvent(config, weather.Current, "short")
-					if err != nil {
-						logerr := LogError(config, err)
-						if logerr != nil {
-							log.Printf("could not log error: %v", logerr)
-						}
-					}
-				}
-			}
-			// pause for a minute so we're not done watering before the timepoint is over
-			time.Sleep(time.Minute * time.Duration(1))
+		}
+		// if we're still meeting timepoint criteria after watering,
+		// wait until the minute has passed so we don't do multiple waters
+		// on a single valve
+		if waterTime > 0 && waterTime < 60 {
+			time.Sleep(time.Duration(60-waterTime) * time.Second)
 		}
 		time.Sleep(time.Second * time.Duration(1))
 	}
