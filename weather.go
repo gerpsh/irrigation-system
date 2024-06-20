@@ -241,3 +241,12 @@ func ShouldWaterSecondary(c *Config, data *WeatherData) bool {
 	}
 	return false
 }
+
+func ShouldWater(c *Config, data *WeatherData, tp *WaterTimepoint) bool {
+	if tp.Type == "primary" && ShouldWaterPrimary(c, data) {
+		return true
+	} else if tp.Type == "secondary" && ShouldWaterSecondary(c, data) {
+		return true
+	}
+	return false
+}

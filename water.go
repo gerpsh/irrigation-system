@@ -9,21 +9,21 @@ import (
 )
 
 type WaterTimepoint struct {
-	Days     []int  `json:"days"`
-	Hour     int    `json:"hour"`
-	Minute   int    `json:"minute"`
-	Type     string `json:"type"`
-	Duration int    `json:"duration"`
+	Days     []int  `json:"days"`     // days of week (0-6) to water
+	Hour     int    `json:"hour"`     // hour of water timepoint (0-23)
+	Minute   int    `json:"minute"`   // minute of water timpoint (0-59)
+	Type     string `json:"type"`     // type of water, primary or secondary
+	Duration int    `json:"duration"` // amount of time to water in seconds
 }
 
 type Valve struct {
-	ID         string            `json:"id"`
-	Name       string            `json:"name"`
-	Pin        int               `json:"pin"`
-	Timepoints []*WaterTimepoint `json:"timepoints"`
+	ID         string            `json:"id"`         // id of valve, arbitrary, used for logging
+	Name       string            `json:"name"`       // string name of valve, arbitrary, used for logging
+	Pin        int               `json:"pin"`        // gpio pin # that controls the valve, pinctrl convention
+	Timepoints []*WaterTimepoint `json:"timepoints"` // list of timepoints that describes the water schedule for the valve
 }
 
-// activate valve-connected gpio pin, keep output on for specified time
+// activate valve-connected gpio pin, keep output on for specified duration
 func (v *Valve) Water(c *Config, duration int) error {
 	err := rpio.Open()
 	if err != nil {
@@ -46,14 +46,13 @@ func (v *Valve) Water(c *Config, duration int) error {
 }
 
 // check if the time is within a primary watering timepoint
-func (v *Valve) IsWaterTimepoint(c *Config, t time.Time) (bool, string, int) {
+func (v *Valve) IsWaterTimepoint(c *Config, t time.Time) (bool, *WaterTimepoint) {
 	for _, tp := range v.Timepoints {
 		if (tp.Hour == t.Local().Hour()) &&
 			(tp.Minute == t.Local().Minute()) &&
 			slices.Contains(tp.Days, int(t.Local().Weekday())) {
-			return true, tp.Type, tp.Duration
+			return true, tp
 		}
-		fmt.Println()
 	}
-	return false, "", 0
+	return false, nil
 }
