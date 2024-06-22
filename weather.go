@@ -197,25 +197,6 @@ func (cw *CurrentWeather) IsHot(c *Config) bool {
 	return cw.Temp > c.HotThreshold
 }
 
-// unused, TODO: determine how to set humidity threshold in conjunction with forecast
-func (cw *CurrentWeather) IsDry(c *Config) bool {
-	return cw.Humidity < c.DryThreshold
-}
-
-func codeInList(code string, list []string) bool {
-	for _, c := range list {
-		if code == c {
-			return true
-		}
-	}
-	return false
-}
-
-// unused, TODO: determine whether this is even worth using
-func (cw *CurrentWeather) IsSunny(c *Config) bool {
-	return codeInList(fmt.Sprintf("%v", cw.Condition.Code), c.SunnyWeatherCodes)
-}
-
 // Determine whether to water during a primary timepoint based on weather history/forecast
 func ShouldWaterPrimary(c *Config, data *WeatherData) bool {
 	// return false if it's been/will be rainy
