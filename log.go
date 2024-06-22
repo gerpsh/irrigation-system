@@ -109,7 +109,7 @@ func PushNotif(c *Config, le *LogEntry) error {
 		recipients = append(recipients, recipient)
 	}
 
-	msg := pushover.NewMessageWithTitle(le.String(), fmt.Sprintf("Irrigation %v", le.Type))
+	msg := pushover.NewMessageWithTitle(le.String(), fmt.Sprintf("Watering %v", le.Type))
 	for _, r := range recipients {
 		_, err := app.SendMessage(msg, r)
 		if err != nil {
