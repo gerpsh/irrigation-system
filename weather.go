@@ -155,42 +155,45 @@ func GetWeatherHistory(c *Config, now time.Time) (*WeatherForecastResponse, erro
 
 // get amount of precipitation for lookback + lookahead interval, along with current weather
 func GetWeatherTimeline(c *Config) (*WeatherData, error) {
-	now := time.Now()
+	if c.UseWeather {
+		now := time.Now()
 
-	weather, err := GetWeatherForecast(c)
-	if err != nil {
-		return nil, fmt.Errorf("could not get weather forecast: %v", err)
-	}
-
-	fc := weather.CurrentWeather
-
-	// grab the hour by hour weather details
-	timepoints := make([]*WeatherHour, 0)
-	for _, d := range weather.Forecast.Days {
-		for _, h := range d.Hours {
-			timepoints = append(timepoints, h)
-		}
-	}
-
-	// Decide whether we need weather history, i.e. whether the lookback takes us into yesterday
-	if now.Add(time.Duration(-c.RainLookback)*time.Hour).Day() != now.Day() {
-		history, err := GetWeatherHistory(c, now)
+		weather, err := GetWeatherForecast(c)
 		if err != nil {
-			return nil, fmt.Errorf("could not get weather history: %v", err)
+			return nil, fmt.Errorf("could not get weather forecast: %v", err)
 		}
 
-		historyTps := make([]*WeatherHour, 0)
-		for _, h := range history.Forecast.Days[0].Hours {
-			historyTps = append(historyTps, h)
+		fc := weather.CurrentWeather
+
+		// grab the hour by hour weather details
+		timepoints := make([]*WeatherHour, 0)
+		for _, d := range weather.Forecast.Days {
+			for _, h := range d.Hours {
+				timepoints = append(timepoints, h)
+			}
 		}
 
-		timepoints = append(historyTps, timepoints...)
+		// Decide whether we need weather history, i.e. whether the lookback takes us into yesterday
+		if now.Add(time.Duration(-c.RainLookback)*time.Hour).Day() != now.Day() {
+			history, err := GetWeatherHistory(c, now)
+			if err != nil {
+				return nil, fmt.Errorf("could not get weather history: %v", err)
+			}
+
+			historyTps := make([]*WeatherHour, 0)
+			for _, h := range history.Forecast.Days[0].Hours {
+				historyTps = append(historyTps, h)
+			}
+
+			timepoints = append(historyTps, timepoints...)
+		}
+
+		data := ParseWeatherTimeline(c, now, timepoints)
+		data.Current = fc
+
+		return data, nil
 	}
-
-	data := ParseWeatherTimeline(c, now, timepoints)
-	data.Current = fc
-
-	return data, nil
+	return nil, nil
 }
 
 func (cw *CurrentWeather) IsHot(c *Config) bool {
