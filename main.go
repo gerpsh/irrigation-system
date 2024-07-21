@@ -38,6 +38,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not read config: %v", err)
 	}
+	err = config.CheckConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("running...")
 	for {
