@@ -39,8 +39,15 @@ func TestLogDB(t *testing.T) {
 			Code: 0,
 		},
 	}
+
+	wd := &WeatherData{
+		Current:      cw,
+		PastPrecip:   0.0,
+		FuturePrecip: 0.0,
+	}
+
 	if config.UseDBLog {
-		err = config.Valves[0].LogEvent(config, cw, "test")
+		err = config.Valves[0].LogEvent(config, wd, "test", false)
 		if err != nil {
 			t.Errorf("could not log to db: %v", err)
 		}

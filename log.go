@@ -21,21 +21,30 @@ func (le *LogEntry) String() string {
 }
 
 // format watering event log message
-func FormatEventMessage(cw *CurrentWeather, duration string, valve string, name string) string {
+func FormatEventMessage(cw *WeatherData, duration string, valve string, name string, skip bool) string {
 	if cw == nil {
 		return fmt.Sprintf("Water on Valve %v (%v) Event: %v", valve, name, duration)
 	} else {
-		msg := fmt.Sprintf("Valve: %v (%v) || Temp: %v || Humidity: %v || Condition: %v || Water Duration: %vs", valve, name, cw.Temp, cw.Humidity, cw.Condition.Text, duration)
+		msg := fmt.Sprintf("Valve: %v (%v) || Temp: %v || Humidity: %v || Condition: %v || Lookahead Precip: %vmm || Lookback Precip: %vmm || Water Duration: %vs", valve, name, cw.Current.Temp, cw.Current.Humidity, cw.Current.Condition.Text, cw.FuturePrecip, cw.PastPrecip, duration)
 		return msg
 	}
 }
 
 // log event in location defined in config
-func (v *Valve) LogEvent(c *Config, cw *CurrentWeather, duration string) error {
-	le := LogEntry{
-		Type:      "event",
-		Timestamp: time.Now(),
-		Message:   FormatEventMessage(cw, duration, v.ID, v.Name),
+func (v *Valve) LogEvent(c *Config, wd *WeatherData, duration string, skip bool) error {
+	var le LogEntry
+	if !skip {
+		le = LogEntry{
+			Type:      "event",
+			Timestamp: time.Now(),
+			Message:   FormatEventMessage(wd, duration, v.ID, v.Name, skip),
+		}
+	} else {
+		le = LogEntry{
+			Type:      "skip",
+			Timestamp: time.Now(),
+			Message:   FormatEventMessage(wd, duration, v.ID, v.Name, skip),
+		}
 	}
 	if !c.UseDBLog {
 		file, err := os.OpenFile(c.EventLogFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)

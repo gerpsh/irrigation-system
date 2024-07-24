@@ -33,6 +33,10 @@ If we're currently in a timepoint as defined in the config,
 we'll check the weather if applicable and decide whether or not to water
 */
 
+func sleep(duration int) {
+	time.Sleep(time.Duration(duration) * time.Second)
+}
+
 func main() {
 	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
 	if err != nil {
@@ -58,7 +62,8 @@ func main() {
 					if logerr != nil {
 						log.Printf("could not log error: %v\n", err)
 					}
-					log.Fatalf("could not create weather timeline: %v", err)
+					// sleep for a minute to avoid constant retries if the weather api is down
+					sleep(60)
 				}
 				if ShouldWater(config, weather, tp) {
 					err = v.Water(config, tp.Duration)
@@ -67,16 +72,27 @@ func main() {
 						if logerr != nil {
 							log.Printf("could not log error: %v\n", err)
 						}
-						log.Fatalf("could not create weather timeline: %v", err)
 					}
 					waterTime += tp.Duration
-					err = v.LogEvent(config, weather.Current, fmt.Sprintf("%v", tp.Duration))
+					err = v.LogEvent(config, weather, fmt.Sprintf("%v", tp.Duration), false)
 					if err != nil {
 						logerr := LogError(config, err)
 						if logerr != nil {
 							log.Printf("could not log error: %v", logerr)
 						}
 					}
+					// log when a timepoint is skipped due to weather
+				} else {
+					err = v.LogEvent(config, weather, "N/A", true)
+					if err != nil {
+						logerr := LogError(config, err)
+						if logerr != nil {
+							log.Printf("could not log error: %v", logerr)
+						}
+					}
+					// sleep for a minute to make sure that we don't stay in the timepoint after a skip,
+					// which would result in rapid retries
+					sleep(60)
 				}
 			}
 		}
@@ -84,7 +100,7 @@ func main() {
 		// wait until the minute has passed so we don't do multiple waters
 		// on a single valve
 		if waterTime > 0 && waterTime < 60 {
-			time.Sleep(time.Duration(60-waterTime) * time.Second)
+			sleep(60 - waterTime)
 		}
 		time.Sleep(time.Second * time.Duration(1))
 	}
