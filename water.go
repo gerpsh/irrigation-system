@@ -8,6 +8,7 @@ import (
 	"github.com/stianeikeland/go-rpio/v4"
 )
 
+// Instructions specifying when and how to water on a given valve
 type WaterTimepoint struct {
 	Days     []int  `json:"days"`     // days of week (0-6) to water
 	Hour     int    `json:"hour"`     // hour of water timepoint (0-23)
@@ -16,6 +17,7 @@ type WaterTimepoint struct {
 	Duration int    `json:"duration"` // amount of time to water in seconds
 }
 
+// Control specifications for valve
 type Valve struct {
 	ID         string            `json:"id"`         // id of valve, arbitrary, used for logging
 	Name       string            `json:"name"`       // string name of valve, arbitrary, used for logging
@@ -45,7 +47,7 @@ func (v *Valve) Water(c *Config, duration int) error {
 	return nil
 }
 
-// check if the time is within a primary watering timepoint
+// check if the time is within a watering timepoint
 func (v *Valve) IsWaterTimepoint(c *Config, t time.Time) (bool, *WaterTimepoint) {
 	for _, tp := range v.Timepoints {
 		if (tp.Hour == t.Local().Hour()) &&

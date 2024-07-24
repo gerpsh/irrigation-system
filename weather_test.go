@@ -55,11 +55,10 @@ func TestParseWeatherTimeline(t *testing.T) {
 
 	now := time.Date(2024, 5, 31, 3, 0, 0, 0, time.Local)
 	c := &Config{
-		RainLookahead:       6,
-		RainLookback:        6,
-		FutureRainThreshold: 7,
-		PastRainThreshold:   7,
-		HotThreshold:        80,
+		RainLookahead: 6,
+		RainLookback:  6,
+		RainThreshold: 7,
+		HotThreshold:  80,
 	}
 	weather := ParseWeatherTimeline(c, now, timeline)
 	if weather.PastPrecip != 15.0 {
@@ -72,9 +71,8 @@ func TestParseWeatherTimeline(t *testing.T) {
 
 func TestShouldWater(t *testing.T) {
 	c := &Config{
-		FutureRainThreshold: 7,
-		PastRainThreshold:   7,
-		HotThreshold:        80,
+		RainThreshold: 12.0,
+		HotThreshold:  80,
 	}
 
 	weather := &WeatherData{

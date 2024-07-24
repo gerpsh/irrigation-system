@@ -13,28 +13,27 @@ import (
 
 // edit config in file named "config.json", must have this name
 type Config struct {
-	UseDBLog            bool   `json:"use_db_log"`     // true if using db log, false if using log file
-	EventLogFile        string `json:"event_log_file"` // file path for event log file if using log file
-	ErrorLogFile        string `json:"error_log_file"` // like above but for errors
-	LogDBURI            string `json:"log_db_uri"`     // database connection string if using db log
-	LogDB               *sql.DB
-	ErrorTable          string   `json:"error_table"`
-	EventTable          string   `json:"event_table"`
-	UsePushover         bool     `json:"use_pushover"`
-	PushoverUserKeys    []string `json:"pushover_user_keys"`
-	PushoverAppToken    string   `json:"pushover_app_token"`
-	Valves              []*Valve `json:"valves"`                // see water.go for Valve type definition
-	UseWeather          bool     `json:"use_weather"`           // whether or not to check weather when deciding to water
-	WeatherApiKey       string   `json:"weather_api_key"`       // weatherapi.com api key
-	Location            string   `json:"location"`              // use a zip code in the USA
-	WeatherForecastUrl  string   `json:"weather_forecast_url"`  // url for weather forecast with formatting characters
-	WeatherHistoryUrl   string   `json:"weather_history_url"`   // likewise but for history, with extra placeholder for history date
-	RainLookback        int      `json:"rain_lookback"`         // how many hours to look back to measure rainfall
-	PastRainThreshold   float64  `json:"past_rain_threshold"`   // threshold of rain in mm to decide whether to water
-	RainLookahead       int      `json:"rain_lookahead"`        // hours to look ahead to measure rainfail
-	FutureRainThreshold float64  `json:"future_rain_threshold"` // threshold of rain in mm to decide whether to water
-	HotThreshold        float64  `json:"hot_threshold"`         // temp in F that is considered hot, used to determine whether to do a secondary water
-	CheckOnlineUrl      string   `json:"check_online_url"`      // url to use to check if device is internet connected
+	UseDBLog           bool   `json:"use_db_log"`     // true if using db log, false if using log file
+	EventLogFile       string `json:"event_log_file"` // file path for event log file if using log file
+	ErrorLogFile       string `json:"error_log_file"` // like above but for errors
+	LogDBURI           string `json:"log_db_uri"`     // database connection string if using db log
+	LogDB              *sql.DB
+	ErrorTable         string   `json:"error_table"`
+	EventTable         string   `json:"event_table"`
+	UsePushover        bool     `json:"use_pushover"`
+	PushoverUserKeys   []string `json:"pushover_user_keys"`
+	PushoverAppToken   string   `json:"pushover_app_token"`
+	Valves             []*Valve `json:"valves"`               // see water.go for Valve type definition
+	UseWeather         bool     `json:"use_weather"`          // whether or not to check weather when deciding to water
+	WeatherApiKey      string   `json:"weather_api_key"`      // weatherapi.com api key
+	Location           string   `json:"location"`             // use a zip code in the USA
+	WeatherForecastUrl string   `json:"weather_forecast_url"` // url for weather forecast with formatting characters
+	WeatherHistoryUrl  string   `json:"weather_history_url"`  // likewise but for history, with extra placeholder for history date
+	RainLookback       int      `json:"rain_lookback"`        // how many hours to look back to measure rainfall
+	RainLookahead      int      `json:"rain_lookahead"`       // hours to look ahead to measure rainfail
+	RainThreshold      float64  `json:"rain_threshold"`       // sum of precipitation (in mm) in the lookback and lookahead period to use as threshold for skipping a watering
+	HotThreshold       float64  `json:"hot_threshold"`        // temp in F that is considered hot, used to determine whether to do a secondary water
+	CheckOnlineUrl     string   `json:"check_online_url"`     // url to use to check if device is internet connected
 }
 
 func ReadConfig(path string) (*Config, error) {

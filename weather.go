@@ -204,7 +204,7 @@ func (cw *CurrentWeather) IsHot(c *Config) bool {
 func ShouldWaterPrimary(c *Config, data *WeatherData) bool {
 	// return false if it's been/will be rainy
 	if data != nil {
-		if data.PastPrecip >= c.PastRainThreshold || data.FuturePrecip >= c.FutureRainThreshold {
+		if (data.PastPrecip + data.FuturePrecip) >= c.RainThreshold {
 			return false
 		}
 	}
@@ -216,7 +216,7 @@ func ShouldWaterPrimary(c *Config, data *WeatherData) bool {
 func ShouldWaterSecondary(c *Config, data *WeatherData) bool {
 	// return false if it's been/will be rainy
 	if data != nil {
-		if data.PastPrecip >= c.PastRainThreshold || data.FuturePrecip >= c.FutureRainThreshold {
+		if (data.PastPrecip + data.FuturePrecip) >= c.RainThreshold {
 			return false
 		}
 		if data.Current.IsHot(c) {
