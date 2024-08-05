@@ -33,7 +33,6 @@ func TestLogDB(t *testing.T) {
 		Temp:     0.0,
 		IsDay:    0,
 		Humidity: 0.0,
-		Precip:   0.0,
 		Condition: &WeatherCondition{
 			Text: "Test",
 			Code: 0,

@@ -16,10 +16,9 @@ type WeatherCondition struct {
 
 // current condition in weather api response
 type CurrentWeather struct {
-	Temp      float64           `json:"temp_f"`
+	Temp      float32           `json:"temp_f"`
 	IsDay     int               `json:"is_day"`
 	Humidity  int               `json:"humidity"`
-	Precip    float64           `json:"precip_in"`
 	Condition *WeatherCondition `json:"condition"`
 }
 
@@ -44,7 +43,7 @@ func (wt *WeatherTime) UnmarshalJSON(b []byte) error {
 // individual weather hour in weather api response
 type WeatherHour struct {
 	Time     WeatherTime `json:"time"`
-	PrecipMM float64     `json:"precip_mm"`
+	PrecipMM float32     `json:"precip_mm"`
 }
 
 type Date struct {
@@ -85,14 +84,14 @@ type WeatherForecastResponse struct {
 // abstracted weather data, derived from forecast, history responses
 type WeatherData struct {
 	Current      *CurrentWeather
-	PastPrecip   float64 // number of mm in lookback period
-	FuturePrecip float64 // number of mm in lookahead period
+	PastPrecip   float32 // number of mm in lookback period
+	FuturePrecip float32 // number of mm in lookahead period
 }
 
 // Parse hourly data from weather api responses to determine past and projected precipitation
 func ParseWeatherTimeline(c *Config, now time.Time, tps []*WeatherHour) *WeatherData {
-	pastSum := 0.000
-	futureSum := 0.000
+	var pastSum float32 = 0.000
+	var futureSum float32 = 0.000
 
 	for _, tp := range tps {
 		if tp.Time.After(now.Add(time.Duration(-c.RainLookback-1)*time.Hour)) && tp.Time.Before(now) {

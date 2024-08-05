@@ -31,8 +31,8 @@ type Config struct {
 	WeatherHistoryUrl  string   `json:"weather_history_url"`  // likewise but for history, with extra placeholder for history date
 	RainLookback       int      `json:"rain_lookback"`        // how many hours to look back to measure rainfall
 	RainLookahead      int      `json:"rain_lookahead"`       // hours to look ahead to measure rainfail
-	RainThreshold      float64  `json:"rain_threshold"`       // sum of precipitation (in mm) in the lookback and lookahead period to use as threshold for skipping a watering
-	HotThreshold       float64  `json:"hot_threshold"`        // temp in F that is considered hot, used to determine whether to do a secondary water
+	RainThreshold      float32  `json:"rain_threshold"`       // sum of precipitation (in mm) in the lookback and lookahead period to use as threshold for skipping a watering
+	HotThreshold       float32  `json:"hot_threshold"`        // temp in F that is considered hot, used to determine whether to do a secondary water
 	CheckOnlineUrl     string   `json:"check_online_url"`     // url to use to check if device is internet connected
 }
 
