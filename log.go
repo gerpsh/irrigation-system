@@ -52,7 +52,13 @@ func (v *Valve) LogEvent(c *Config, wd *WeatherData, duration string, skip bool)
 			return fmt.Errorf("could not open event log file: %v", err)
 		}
 		defer file.Close()
-		_, err = file.Write([]byte(le.String() + "\n"))
+		var msg string
+		if wd != nil {
+			msg = FormatEventMessage(wd, duration, v.ID, v.Name, skip)
+		} else {
+			msg = le.String()
+		}
+		_, err = file.Write([]byte(msg + "\n"))
 		if err != nil {
 			log.Println("could not log event")
 			return fmt.Errorf("could not log event to file: %v", err)
