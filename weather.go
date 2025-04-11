@@ -199,11 +199,18 @@ func (cw *CurrentWeather) IsHot(c *Config) bool {
 	return cw.Temp > c.HotThreshold
 }
 
+func (cw *CurrentWeather) IsCold(c *Config) bool {
+	return cw.Temp < c.ColdThreshold
+}
+
 // Determine whether to water during a primary timepoint based on weather history/forecast
 func ShouldWaterPrimary(c *Config, data *WeatherData) bool {
-	// return false if it's been/will be rainy
+	// return false if it's been/will be rainy, or if it's too cold and there is risk of frost
 	if data != nil {
 		if (data.PastPrecip + data.FuturePrecip) >= c.RainThreshold {
+			return false
+		}
+		if data.Current.IsCold(c) {
 			return false
 		}
 	}

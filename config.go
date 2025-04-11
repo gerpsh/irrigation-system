@@ -33,6 +33,7 @@ type Config struct {
 	RainLookahead      int      `json:"rain_lookahead"`       // hours to look ahead to measure rainfail
 	RainThreshold      float32  `json:"rain_threshold"`       // sum of precipitation (in mm) in the lookback and lookahead period to use as threshold for skipping a watering
 	HotThreshold       float32  `json:"hot_threshold"`        // temp in F that is considered hot, used to determine whether to do a secondary water
+	ColdThreshold      float32  `json:"cold_threshold"`      // temp in F that is considered too cold to water
 	CheckOnlineUrl     string   `json:"check_online_url"`     // url to use to check if device is internet connected
 }
 

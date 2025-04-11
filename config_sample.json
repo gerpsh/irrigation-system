@@ -76,5 +76,6 @@
     "rain_lookahead": 6,
     "future_rain_threshold": 10.00,
     "hot_threshold": 75.0,
+    "cold_threshold": 40.0,
     "check_online_url": "https://www.google.com/"
 }
