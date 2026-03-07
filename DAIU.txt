@@ -1,0 +1,6 @@
+Origin: HM · Remix – DAIU 1.0
+All Go application code was written by the author without AI assistance (initial commit, 
+June 2024). Starting September 2024, Cursor's tab-completion feature was used for code 
+editing. The README and setup script were generated with agentic AI (Cursor/Claude) and 
+reviewed by the author.
+https://daiu.org/1.0/hm-remix
