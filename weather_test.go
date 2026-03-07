@@ -127,7 +127,7 @@ func TestShouldWater(t *testing.T) {
 }
 
 func TestGetWeatherForecast(t *testing.T) {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	config, err := ReadConfig("./config.json")
 	if err != nil {
 		t.Errorf("could not read config: %v", err)
 	}
@@ -140,7 +140,7 @@ func TestGetWeatherForecast(t *testing.T) {
 }
 
 func TestGetWeatherHistory(t *testing.T) {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	config, err := ReadConfig("./config.json")
 	if err != nil {
 		t.Errorf("could not read config: %v", err)
 	}
@@ -152,7 +152,7 @@ func TestGetWeatherHistory(t *testing.T) {
 }
 
 func TestGetWeatherTimeline(t *testing.T) {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	config, err := ReadConfig("./config.json")
 	if err != nil {
 		t.Errorf("could not read config: %v", err)
 	}

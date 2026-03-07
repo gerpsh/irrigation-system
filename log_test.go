@@ -6,7 +6,7 @@ import (
 )
 
 func TestPushover(t *testing.T) {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	config, err := ReadConfig("./config.json")
 	if err != nil {
 		t.Errorf("could not read config: %v", err)
 	}
@@ -25,7 +25,7 @@ func TestPushover(t *testing.T) {
 }
 
 func TestLogDB(t *testing.T) {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	config, err := ReadConfig("./config.json")
 	if err != nil {
 		t.Errorf("could not read config: %v", err)
 	}

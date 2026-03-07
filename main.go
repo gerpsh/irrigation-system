@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 )
 
@@ -10,6 +11,7 @@ import (
 Watering happens in two different scenarios:
 1. At a primary timepoint, where there will ALWAYS be watering,
 unless there will a certain amount of rain within a certain timeframe surrounding the timepoint,
+or if the temperature is too cold and there is a risk of frost,
 as defined in the config
 
 2. At a secondary timepoint, where there will NEVER be watering,
@@ -38,7 +40,11 @@ func sleep(duration int) {
 }
 
 func main() {
-	config, err := ReadConfig("/home/shaefferg/code/go/src/github.com/gerpsh/irrigation-system/config.json")
+	configPath := "./config.json"
+	if len(os.Args) > 1 {
+		configPath = os.Args[1]
+	}
+	config, err := ReadConfig(configPath)
 	if err != nil {
 		log.Fatalf("could not read config: %v", err)
 	}
