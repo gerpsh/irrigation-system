@@ -17,7 +17,7 @@ Without weather enabled, primary timepoints always water and secondary timepoint
 
 ## Prerequisites
 
-- **Hardware**: Raspberry Pi (or similar SBC) with GPIO, solenoid valves wired to GPIO pins
+- **Hardware**: Raspberry Pi with GPIO, relay HAT, 12V DC solenoid valves, and a 12V power supply. See [HARDWARE.md](HARDWARE.md) for the full parts list, wiring guide, and plumbing instructions.
 - **Go**: 1.22.3+
 - **WeatherAPI.com API key** (free tier works) if using weather-based decisions
 - **PostgreSQL** (optional) for event/error logging
