@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plumbing Diagram — Irrigation System</title>
+<style>
+  body { margin: 0; background: #fff; display: flex; justify-content: center; padding: 20px; }
+  svg { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  .pipe { stroke: #2980b9; stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .pipe-thin { stroke: #3498db; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .drip-line { stroke: #3498db; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .flow-arrow { fill: #2471a3; }
+  .component { fill: #ecf0f1; stroke: #2c3e50; stroke-width: 2; }
+  .valve-body { fill: #bdc3c7; stroke: #2c3e50; stroke-width: 2; }
+  .valve-coil { fill: #95a5a6; stroke: #2c3e50; stroke-width: 1.5; }
+  .spigot { fill: #7f8c8d; stroke: #2c3e50; stroke-width: 2; }
+  .manifold { fill: #d5d8dc; stroke: #2c3e50; stroke-width: 2; }
+  .bed { fill: #a0522d; stroke: #6d4c41; stroke-width: 2; rx: 6; }
+  .soil { fill: #4e342e; rx: 4; }
+  .plant { stroke: #27ae60; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+  .plant-fill { fill: #27ae60; }
+  .label { font-size: 13px; fill: #2c3e50; }
+  .label-sm { font-size: 11px; fill: #555; }
+  .label-bold { font-size: 14px; fill: #2c3e50; font-weight: 600; }
+  .label-title { font-size: 15px; fill: #2c3e50; font-weight: 700; }
+  .note-box { fill: #f0f6ff; stroke: #aed6f1; stroke-width: 1.5; rx: 6; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 900 440" width="900" height="440">
+
+  <!-- ============ SPIGOT ============ -->
+  <!-- Wall -->
+  <rect x="20" y="100" width="20" height="200" fill="#d5d8dc" stroke="#95a5a6" stroke-width="1.5"/>
+  <!-- Spigot body -->
+  <rect class="spigot" x="40" y="175" width="40" height="20" rx="3"/>
+  <!-- Spigot handle -->
+  <rect class="spigot" x="50" y="160" width="20" height="20" rx="2"/>
+  <line x1="60" y1="155" x2="60" y2="140" stroke="#2c3e50" stroke-width="2.5"/>
+  <line x1="50" y1="140" x2="70" y2="140" stroke="#2c3e50" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Spigot spout -->
+  <rect class="spigot" x="80" y="178" width="15" height="14" rx="2"/>
+  <text class="label-bold" x="60" y="220" text-anchor="middle">Outdoor</text>
+  <text class="label-bold" x="60" y="236" text-anchor="middle">Spigot</text>
+
+  <!-- Hose from spigot to manifold -->
+  <path class="pipe" d="M95,185 L200,185"/>
+  <!-- Flow arrow -->
+  <polygon class="flow-arrow" points="170,179 182,185 170,191"/>
+
+  <!-- ============ Y-MANIFOLD ============ -->
+  <rect class="manifold" x="200" y="165" width="60" height="40" rx="8"/>
+  <text class="label-bold" x="230" y="188" text-anchor="middle" font-size="11">Y-Split</text>
+  <text class="label-bold" x="230" y="222" text-anchor="middle">Y-Manifold</text>
+
+  <!-- Upper branch to Valve 1 -->
+  <path class="pipe" d="M260,175 L300,175 Q320,175 320,120 L360,90"/>
+  <polygon class="flow-arrow" points="340,82 355,90 340,97"/>
+
+  <!-- Lower branch to Valve 2 -->
+  <path class="pipe" d="M260,195 L300,195 Q320,195 320,280 L360,310"/>
+  <polygon class="flow-arrow" points="340,303 355,310 340,317"/>
+
+  <!-- ============ VALVE 1:  ============ -->
+  <rect class="valve-body" x="360" y="65" width="70" height="50" rx="6"/>
+  <rect class="valve-coil" x="377" y="48" width="36" height="20" rx="3"/>
+  <text class="label-sm" x="395" y="62" text-anchor="middle">coil</text>
+  <!-- Flow arrow on valve body -->
+  <polygon fill="#2471a3" points="380,90 398,83 380,76" opacity="0.6"/>
+  <text class="label-bold" x="395" y="87" text-anchor="middle" font-size="11">Valve 1</text>
+  <text class="label-sm" x="395" y="100" text-anchor="middle" fill="#27ae60" font-weight="600"></text>
+  <!-- inlet/outlet labels -->
+  <text class="label-sm" x="355" y="78" text-anchor="end" fill="#888">in</text>
+  <text class="label-sm" x="435" y="78" fill="#888">out</text>
+
+  <!-- Pipe from valve 1 to bed 1 -->
+  <path class="pipe-thin" d="M430,90 L530,90"/>
+  <polygon class="flow-arrow" points="500,84 515,90 500,96"/>
+
+  <!-- ============ GARDEN BED 1 ============ -->
+  <rect class="bed" x="540" y="50" width="180" height="90"/>
+  <rect class="soil" x="548" y="58" width="164" height="74" fill="#5d4037"/>
+  <!-- Drip line -->
+  <path class="drip-line" d="M555,75 L695,75 L695,95 L555,95 L555,115 L695,115"/>
+  <!-- Water drops -->
+  <circle fill="#3498db" cx="600" cy="82" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="640" cy="82" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="680" cy="82" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="575" cy="102" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="625" cy="102" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="665" cy="102" r="2" opacity="0.7"/>
+  <!-- Plants -->
+  <path class="plant" d="M580,58 Q580,40 570,30 M580,58 Q580,38 590,28 M580,58 Q575,42 565,38 M580,58 Q585,42 595,38"/>
+  <path class="plant" d="M650,58 Q650,40 640,30 M650,58 Q650,38 660,28 M650,58 Q645,42 635,38 M650,58 Q655,42 665,38"/>
+  <text class="label-bold" x="630" y="160" text-anchor="middle">Zone 1: </text>
+
+  <!-- ============ VALVE 2:  ============ -->
+  <rect class="valve-body" x="360" y="285" width="70" height="50" rx="6"/>
+  <rect class="valve-coil" x="377" y="268" width="36" height="20" rx="3"/>
+  <text class="label-sm" x="395" y="282" text-anchor="middle">coil</text>
+  <polygon fill="#2471a3" points="380,310 398,303 380,296" opacity="0.6"/>
+  <text class="label-bold" x="395" y="307" text-anchor="middle" font-size="11">Valve 2</text>
+  <text class="label-sm" x="395" y="320" text-anchor="middle" fill="#e67e22" font-weight="600"></text>
+  <text class="label-sm" x="355" y="298" text-anchor="end" fill="#888">in</text>
+  <text class="label-sm" x="435" y="298" fill="#888">out</text>
+
+  <!-- Pipe from valve 2 to bed 2 -->
+  <path class="pipe-thin" d="M430,310 L530,310"/>
+  <polygon class="flow-arrow" points="500,304 515,310 500,316"/>
+
+  <!-- ============ GARDEN BED 2 ============ -->
+  <rect class="bed" x="540" y="270" width="180" height="90"/>
+  <rect class="soil" x="548" y="278" width="164" height="74" fill="#5d4037"/>
+  <!-- Drip line -->
+  <path class="drip-line" d="M555,295 L695,295 L695,315 L555,315 L555,335 L695,335"/>
+  <!-- Water drops -->
+  <circle fill="#3498db" cx="600" cy="302" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="640" cy="302" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="680" cy="302" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="575" cy="322" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="625" cy="322" r="2" opacity="0.7"/>
+  <circle fill="#3498db" cx="665" cy="322" r="2" opacity="0.7"/>
+  <!-- Plants -->
+  <path class="plant" d="M580,278 Q580,260 570,250 M580,278 Q580,258 590,248 M580,278 Q575,262 565,258 M580,278 Q585,262 595,258"/>
+  <path class="plant" d="M650,278 Q650,260 640,250 M650,278 Q650,258 660,248 M650,278 Q645,262 635,258 M650,278 Q655,262 665,258"/>
+  <text class="label-bold" x="630" y="380" text-anchor="middle">Zone 2: </text>
+
+  <!-- ============ NOTE ============ -->
+  <rect class="note-box" x="105" y="300" width="225" height="60"/>
+  <text class="label-sm" x="115" y="318" font-weight="600">Arrow on valve body indicates</text>
+  <text class="label-sm" x="115" y="333">flow direction. Inlet faces manifold,</text>
+  <text class="label-sm" x="115" y="348">outlet faces irrigation tubing.</text>
+
+</svg>
+</body>
+</html>
